@@ -1,0 +1,47 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/findPlayer.html.twig #}
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+
+{% block title %}Spielersuche - Ergebnis{% endblock%}
+{% block body %}
+    <div id="heading">Ergebnisse ({{ players|length }})</div>
+   <div id="contentWrap">
+        <ul id="results">
+       {% for player in players %}
+        <li id="id_{{ player.id }}"> 
+ <section style="float: left;">
+        <a href="#" style="float: left; "><img src="{{ asset( 'images/dummy_thumbnail.png') }}"></a>
+        <article style="height: 75px; float: left; display: block; margin-left: 8px;">
+            <h3 style="margin-top: 0px;">    
+            <a class="mailinfo" style="vertical-align: top;" href="">{{ player.email }}</a>
+            {% for i in 1..player.popularity %}
+            <img src="{{ asset('images/star.jpeg') }}">
+            {% endfor %}
+            </h3>         
+        lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor
+        <br>
+        lorem ipsum dolorlorem ipsum dolor
+        <section id="actions">
+        <a href="#" style="font-weight: bold;">benachrichtigen</a>
+        &nbsp;|&nbsp;
+        <a href="#" class="inviteMe" style="font-weight: bold;">einladen</a>
+          &nbsp;|&nbsp;
+        <a href="#" style="font-weight: bold;">details</a>
+           &nbsp;|&nbsp;
+           <a href="#" class="removeListItem" style="font-weight: bold;">entfernen</a>
+        
+        </section>
+        </article>
+        
+        <div style="clear: both;"></div>
+        </section>
+        </li>
+       {% endfor %}    
+        
+       </ul>
+              <br><br>
+         <div id="buttonPos">
+                    <input type="button" value="Jetzt alle Spieler benachrichtigen" id="sendInvitation">
+                </div>
+        
+   </div>
+{% endblock %}

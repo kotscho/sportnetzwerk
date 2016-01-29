@@ -1,0 +1,133 @@
+sportnetzwerk_spn_homepage:
+    pattern: /
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:index }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_spn_signup2:
+    pattern: /signup2
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:signup2 }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_spn_faq:
+    pattern: /faq
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:faq }
+    schemes:  [https]
+    requirements: 
+        _method: GET
+sportnetzwerk_spn_contact:
+    pattern: /contact
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:contact }
+    schemes:  [https]
+    requirements: 
+        _method: GET
+sportnetzwerk_spn_activation:
+    pattern: /activate/{id}/{token}
+    defaults: { _controller: SportnetzwerkSpnBundle:Activation:activate }
+    schemes:  [https]
+    requirements: 
+        _method: GET
+        token: "[a-zA-Z0-9]+"
+        id: \d+
+sportnetzwerk_spn_activation_done:
+    pattern: /activate/done
+    defaults: { _controller: SportnetzwerkSpnBundle:Activation:done }
+    schemes:  [https]
+sportnetzwerk_spn_login:
+    pattern: /profile/login
+    defaults: { _controller: SportnetzwerkSpnBundle:Signin:login }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+ #used by firewall redirect
+_security_signin:
+    pattern: /signin
+    defaults: { _controller: SportnetzwerkSpnBundle:Security:login }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+        
+_logout:
+    path: /profile/logout
+    defaults: { _controller: SportnetzwerkSpnBundle:Security:logout }
+    #defaults: { _controller: SportnetzwerkSpnBundle:Signin:logout }
+    schemes:  [https]
+sportnetzwerk_spn_findPlayer:
+    path: /find
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:find }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_show_locations_ajax:
+    path: /locations/ajax
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:ajaxLocations }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_spn_findPlayerResults:
+    path: /results/{startDate}/{endDate}/{sportsId}/{zip}/{location}/{skillLevelsId}/{gender}/{numOfPlayers}/{eventId}
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:showPlayers }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_spn_store_events_ajax:
+    path: /events/ajax
+    defaults: { _controller: SportnetzwerkSpnBundle:Events:ajaxStoreEvent }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_spn_invitation_done:
+    pattern: /invitation/done
+    defaults: { _controller: SportnetzwerkSpnBundle:Page:invitationDone }
+    schemes:  [https]
+sportnetzwerk_spn_invitation_mail:
+    pattern: /invitation/{id}/{token}
+    defaults: { _controller: SportnetzwerkSpnBundle:Events:processTokenLink }
+    schemes:  [https]
+    requirements: 
+        _method: GET
+        token: "[a-zA-Z0-9]+"
+        id: \d+
+sportnetzwerk_spn_invitation_mail_confirmed:
+    pattern: /invitation/confirmed
+    defaults: { _controller: SportnetzwerkSpnBundle:Events:eventInvitationConfirmed }
+    schemes:  [https]
+    requirements:
+        _method: GET
+sportnetzwerk_spn_sportsnews_render:
+    pattern: /sportsnews
+    defaults: { _controller: SportnetzwerkSpnBundle:Sportsnews:renderFeeds }
+    schemes:  [https]
+    requirements:
+        _method: GET
+sportnetzwerk_spn_schedule:
+    pattern: /schedule
+    defaults: { _controller: SportnetzwerkSpnBundle:Events:schedule }
+    schemes:  [https]
+    requirements:
+        _method: GET
+sportnetzwerk_spn_reinvitation_ajax:
+    path: /reinvitation/ajax
+    defaults: { _controller: SportnetzwerkSpnBundle:Events:ajaxReinvitationEvent }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_spn_profile_current:
+    pattern: /profile/current
+    defaults: { _controller: SportnetzwerkSpnBundle:Profile:display }
+    schemes:  [https]
+    requirements:
+        _method: GET
+sportnetzwerk_spn_store_password_ajax:
+    path: /profile/password/ajax/store
+    defaults: { _controller: SportnetzwerkSpnBundle:Profile:ajaxStorePassword }
+    schemes:  [https]
+    requirements: 
+        _method: GET|POST
+sportnetzwerk_spn_profile_image_upload_ajax:
+    path: /profile/upload/ajax/image
+    defaults: { _controller: SportnetzwerkSpnBundle:Profile:ajaxUploadImage }
+    schemes:  [https]
+    requirements: 
+        _method: POST

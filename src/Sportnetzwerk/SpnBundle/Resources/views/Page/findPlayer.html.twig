@@ -1,0 +1,78 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/findPlayer.html.twig #}
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+
+{% block title %}Spielersuche{% endblock%}
+{% block body %}
+    <div id="heading">Mitspielersuche</div>
+   <div id="contentWrap">
+               <form method="POST" id="playerdata" action="{{ path('sportnetzwerk_spn_findPlayer') }}" {{ form_enctype(form) }}>
+ <p id="leftHeading">Finde deine(n) Mitspieler</p>
+                <p id="description">
+                    Hier kannst deine Spielersuche ausführen:<br>
+                    Durch den gezielten Einsatz unserer Suchfilter kannst du nun Mitspieler nach deinem "Maß" und in der von dir
+                    <br>gewünschten Umgebung ansprechen.
+                    <br>
+                    Falls du noch Fragen hast: In den <a href="faqs.html">faqs</a> stehen wir dir Rede und Antwort. 
+                    <br>
+
+                   <section id="tripleLeft">
+                       
+       
+  
+                 {{ form_label(form.sports_id, 'Auswahl der Sportart') }}<br>
+                {{ form_widget(form.sports_id) }}<br>
+                 {{ form_label(form.zip_area, 'PLZ') }}<br>
+                {{ form_widget(form.zip_area) }}
+                <br>
+                 {{ form_label(form.locations_id, 'Austragungsort') }}<br>
+                {{ form_widget(form.locations_id) }}<br>
+                {{ form_label(form.start, 'Event Start') }}<br>
+                
+                {{ form_widget(form.start, {'attr': {'id': 'start'} }) }}<br>
+                
+                {{ form_label(form.end, 'Event Ende') }}<br>
+                
+                {{ form_widget(form.end, {'attr': {'id': 'end'} }) }}<br>
+
+                
+   </section>
+   <section id="tripleCenter">
+                
+               {{ form_label(form.gender, 'Geschlecht') }}<br>
+                {{ form_widget(form.gender) }}<br>
+                {{ form_label(form.skill_levels_id, 'Skill Level') }}<br>
+                {{ form_widget(form.skill_levels_id) }}<br>
+                
+                 {{ form_label(form.num_of_players, 'Spielerzahl') }}<br>
+                {{ form_widget(form.num_of_players) }}<br>
+
+              
+                </section>
+   <section id="tripleRight">
+         {{ form_label(form.notes, 'Notizen') }}
+                {{ form_widget(form.notes) }}
+                 {{ form_rest(form) }}
+                <br><br>
+                
+                <div id="buttonPos">
+                    <input type="button" value="Suche starten" id="submitPlayerSearch">
+                </div>
+       </section>
+            </form>
+
+                </div>
+     {% if validationmsg|length > 0 %}
+        <script type="text/javascript">
+        $(document).ready(function() {
+            //kdos maybe repost data here to make em sticky...
+            $("#hiddenLink").fancybox().trigger('click');
+        });
+        </script>
+        <div id="shoerrors">
+        {% for key, error in validationmsg %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </div>
+    <a href="#shoerrors" id="hiddenLink"></a>
+    {% endif %}
+{% endblock %}

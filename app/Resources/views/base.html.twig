@@ -1,0 +1,548 @@
+<!doctype html>
+<head>
+    {% if app.user %}
+        {% set username = app.user.username %}
+        {% set userid = app.user.id %}
+    {% else %}
+        {% set username = '' %}
+    {% endif %}
+    {% if eventId is not defined %}
+        {% set eventId = 0 %}
+    {% endif %}    
+  <meta charset="utf-8">
+  <title>{% block title %}Sportnetzwerk v 1.0{% endblock %}</title>
+  <meta name="description" content="Welcome to sportnetzwerk.net.">
+  <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+  {% block cdn %}
+  <link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />
+  <script type="text/javascript" src="{{ asset('js/jquery-1.8.3.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/jquery.contextMenu.js') }}"></script>
+   <script type="text/javascript" src="{{ asset('js/jquery.qtip.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/jquery-1.9.2-ui.js') }}"></script>
+   <script type="text/javascript" src="{{ asset('js/moment.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/jquery-ui-timepicker-addon.js') }}"></script>
+ <script type="text/javascript" src="{{ asset('js/fullcalendar.js') }}"></script>
+
+  
+  {% endblock %}
+  {% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('css/fullcalendar.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/fullcalendar.print.css') }}" media="print">
+  <link rel="stylesheet" href="{{ asset('css/jquery.qtip.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/style.css?v=1') }}">
+  <link rel="stylesheet" href="{{ asset('css/nav.css') }}">
+ 
+  <link rel="stylesheet" href="{{ asset('css/jquery.fancybox.css') }}" media="screen">
+  <link rel="stylesheet" href="{{ asset('css/jquery.contextMenu.css') }}" media="screen">
+  {% endblock %}
+  {% block listItems %}
+  <script>
+      $(document).ready(function(){
+        var str=location.href.toLowerCase();
+       
+            $("#nav li a").each(function() {
+                if (str.indexOf(this.href.toLowerCase()) > -1) {
+                    $("li.current").removeClass("current");
+                    $(this).parent().addClass("current");
+                }
+            });
+            //if item is drop down menu link...
+            $("li.current").parents().each(function(){
+                if ($(this).is("li")){
+                    $(this).addClass("current");
+                }
+            });
+        });
+
+      
+      $(document).ready(function() {  
+          $( ".removeListItem" ).click(function(){
+             //var li = $('#removeListItem_108').parent();
+             var elementNum = $("#results > li:visible").length - 1;
+             $(this).parent().parent().parent().parent().hide("fade", {}, 1000);
+             if( elementNum == 0 ){
+                 //zero results, go back to search
+                 window.location.replace("{{ path('sportnetzwerk_spn_findPlayer') }}");
+                 return false;
+             }
+             $("#heading").html('Ergebnisse('+ elementNum +')');
+
+             return false;
+          });
+      });
+      
+      $(document).ready(function() {  
+            $("#sendInvitation").click(function(){
+
+                var listElements = $("#results li");
+                var emails = [];
+                var count = 0;
+                
+                listElements.each(function(idx, li){
+                    if( $(li).is(':visible')) {
+                        emails[count] = $(li).children().children().children('h3').children('a.mailinfo').text();
+                        count++;
+                    }
+                });
+               //console.log(emails);
+               $.ajax({
+                    type:"POST",
+                    url: "{{ path('sportnetzwerk_spn_store_events_ajax') }}",
+                    data: { player_ids: emails, event_id: "{{ eventId }}" },
+                    cache: false,
+                    success: function(result){
+                        console.log(result);
+                        //redirect...
+                        window.location.replace("{{ path('sportnetzwerk_spn_invitation_done') }}")
+                    },
+                    error: function(){
+                        alert('debug: failure');
+                        console.log('failure');
+                    }
+                }); 
+               
+            });
+    
+    
+      });
+      
+      $(document).ready(function(){
+        $(".inviteMe").click(function(){
+             var currentLiItem = $(this).parent().parent().parent().parent();
+             var elementNum = $("#results > li:visible").length - 1;
+             var email = [];
+             
+             email[0] = currentLiItem.children().children().children('h3').children('a.mailinfo').text();
+             //
+             $.ajax({
+                    type:"POST",
+                    url: "{{ path('sportnetzwerk_spn_store_events_ajax') }}",
+                    data: { player_ids: email, event_id: "{{ eventId }}" },
+                    cache: false,
+                    success: function(result){
+                        console.log(result);
+                        console.log('Elements:' + elementNum);
+                        console.log('Event id:' + "{{ eventId }}" );
+                        currentLiItem.hide("fade", {}, 1000);
+                        $("#heading").html('Ergebnisse('+ elementNum +')');
+                        
+                        if( elementNum == 0 ){
+                           //alert('no Elements'); 
+                           window.location.replace("{{ path('sportnetzwerk_spn_invitation_done') }}")
+                            
+                        } 
+                        else{
+                           //some message that an invitation was sent to the user
+                           alert('Invitation send to ' + email );
+                        }
+                    },
+                    error: function(){
+                        alert('debug: failure');
+                        console.log('failure');
+                    }
+                }); 
+             //
+             
+        });
+      });
+ </script>
+   {% endblock %}
+  
+  {% block datepicker %}
+  <script>
+    $(function() {
+        $( "#player_signup_birthday" ).datepicker({
+            showOn: "button",
+            buttonImage: "{{ asset( 'images/calendar-green.gif' ) }}",
+            buttonImageOnly: true,
+            dateFormat: 'dd-mm-yy',
+            showAnim: 'bounce'
+        });
+        
+    });
+    </script>
+   {% endblock %}
+   {% block findPlayerDateTime %}
+        <script>
+    //prepend "event_form" to all ids in th following methods
+    $(function() {
+        $("#event_form_start").datetimepicker();
+        $("#event_form_end").datetimepicker();
+        $( "#event_form_start" ).datepicker( "option", "dateFormat", "dd-mm-yy" );
+        $( "#event_form_start" ).datepicker( "option", "showAnim", "bounce" );
+        $( "#event_form_end" ).datepicker( "option", "dateFormat", "dd-mm-yy" );
+        $( "#event_form_end" ).datepicker( "option", "showAnim", "bounce" );
+    });
+    </script>
+   {% endblock %}
+   {% block fancybox %}
+  <script type="text/javascript" src="{{ asset( 'js/jquery.fancybox.js') }}"></script>
+  <script>
+    $(document).ready(function() {
+        $("a#loginHref").fancybox();
+        $("a#loginLink").fancybox();
+    });
+    
+    {% if app.request.attributes.get('_route') == 'sportnetzwerk_spn_profile_current' %}
+    $(document).ready(function() {
+        $("a#passwordHref").fancybox();//id of the href
+    });
+    {% endif %}
+    {% if app.request.attributes.get('_route') == '_security_signin' %}
+        $(document).ready(function() {
+        $("a#loginHref").fancybox().trigger('click');
+    });
+    {% endif %} 
+    </script>
+    {% endblock %}
+    {% block loginAjax %}
+        <script>
+
+         $(document).ready(function() {
+         $("#loginForm").submit(function(){
+
+            var $form = $(this).closest("#loginForm");
+            
+            if($form){
+                
+                var url = $("#loginForm").attr("action");
+
+                $.ajax({    
+                    type: "POST",
+                    url: url,
+                    data: $form.serialize(), // serializing the data being sent 
+                    cache: false,
+                    success: function(result){
+                        console.log(result);
+                        $("#loginForm")[0].reset();
+                        $("#error_message").html("nbsp;");
+                        $.fancybox.close();
+                        //location.reload();  
+                        window.location.replace("{{ path('sportnetzwerk_spn_homepage') }}")
+                    },
+                    error: function(){
+                        //alert('failure');
+                        $("#error_message").html("Username/Password wrong try again");
+                    }
+                }); 
+            }
+            return false;
+        });
+    });
+ </script>
+{% endblock %} 
+{% block  locationsAjax %}
+ <script>
+ $(document).ready(function() {
+     $("#event_form_zip_area").blur(function(){ 
+
+         $.ajax({    
+                    type: "POST",
+                    url: "{{ path('sportnetzwerk_show_locations_ajax') }}",
+                    data: { zip: this.value, sportsId: $("#event_form_sports_id").val() },
+                    cache: false,
+                    success: function(result){
+                        console.log(result);
+                        var options = $("#event_form_locations_id");
+                        options.empty()
+                        $.each(result, function( index, text ) {
+                            options.append($("<option selected=\"selected\"></option>").val(index).html(text));
+                        });
+                        
+                    },
+                    error: function(){
+                        alert('failure');
+                        $("#error_message").html("Something went wrong...");
+                    }
+                }); 
+                   
+     });
+        
+ });       
+ </script>
+ 
+ <script>
+ $(document).ready(function() {
+     $("#event_form_sports_id").change(function(){ 
+         //alert(this.value);
+         var zip = $("#event_form_zip_area").val();
+         //alert('debug');
+         if( zip.length > 0 ){
+            $.ajax({    
+                    type: "POST",
+                    url: "{{ path('sportnetzwerk_show_locations_ajax') }}",
+                    data: { zip: zip, sportsId: this.value },
+                    cache: false,
+                    success: function(result){
+                        console.log(result);
+                        var options = $("#event_form_locations_id");
+                        options.empty();
+                        $.each(result, function( index, text ) {
+                            options.append($("<option selected=\"selected\"></option>").val(index).html(text));
+                        });
+                        
+                    },
+                    error: function(){
+                        alert('failure');
+                        $("#error_message").html("Something went wrong...");
+                    }
+            }); 
+        }
+        return false;
+     });
+        
+ });       
+ </script>
+ {% if app.request.attributes.get('_route') == 'sportnetzwerk_spn_profile_current' %}
+    <script>   
+    $(document).ready(function(){
+        
+    $("#changePasswd").click(function(){
+        var url = "{{ path("sportnetzwerk_spn_store_password_ajax") }}";
+        var oldPasswd = $("#oldPassword").val();
+        var newPasswd = $("#newPassword").val();
+        var repeatPasswd = $("#repeatPassword").val();
+        
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { oldPassword: oldPasswd, newPassword: newPasswd, repeatPassword: repeatPasswd },
+            cache: false,
+            success: function(result){
+                console.log(result);
+                console.log('Request returned OK!!!');
+                $.fancybox.close();
+            },
+            error: function(){
+                console.log('XMLHTTP error');
+                $("#error_message").html("Something went wrong...");
+                return false;
+            }
+        });
+        });
+    });
+    </script>   
+ {% endif %}
+    
+ {% if app.request.attributes.get('_route') ==  'sportnetzwerk_spn_profile_current'%}   
+  <script>
+    $(document).ready(function(){
+        $("#uploadImage").click(function(){
+            
+            var img = $("#imageUploader").val();
+            var url = "{{ path('sportnetzwerk_spn_profile_image_upload_ajax') }}";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {image: img},
+                cache: false,
+                success: function(result){
+                    console.log(result);
+                },
+                error: function(){
+                    alert('failure');
+                   
+                    return false;
+                }
+            });
+        });
+    });
+    
+  </script>  
+ {% endif %}    
+ <script>
+ $(document).ready(function() {
+     $("#submitPlayerSearch").click(function(){ 
+
+         var zip = $("#event_form_zip_area").val();
+         var sport = $("#event_form_sports_id").val();
+         
+                //alert(zip + ' and ' + sport);
+         //if( (zip.length > 0) && (sport.length > 0)){
+            $.ajax({    
+                    type: "POST",
+                    url: "{{ path('sportnetzwerk_show_locations_ajax') }}",
+                    data: { zip: zip, sportsId: sport },
+                    cache: false,
+                    success: function(result){
+                        console.log(result);
+                        var options = $("#event_form_locations_id");
+                        options.empty();
+                        $.each(result, function( index, text ) {
+                            options.append($("<option></option>").val(index).html(text));
+                        });
+                        $('#playerdata').submit();
+                    },
+                    error: function(){
+                        alert('failure');
+                        $("#error_message").html("Something went wrong...");
+                        return false;
+                    }
+            }); 
+        //}
+        //return false;
+     });
+        
+ });       
+ </script>
+ 
+{% endblock %}
+ {% block imageUpload %}
+ <script>
+    $(document).ready(function() {
+        $("a#uploadHref").fancybox();//id of the href
+    });
+    </script>
+ {% endblock %}
+{% block contextMenu %}
+
+<script>
+$(function(){
+    $.contextMenu({
+        selector: '.context-menu-one', 
+        trigger: 'left',
+        callback: function(key, options) {
+            var m = "clicked: " + key;
+            window.console && console.log(m) || alert(m);
+            location.href = key;
+        },
+        items: {
+            "{{ path('sportnetzwerk_spn_faq') }}": {name: "faq"},//just a test
+            "sep1": "---------",
+            "cut": {name: "Cut"},
+        }
+    });
+    
+    $('.context-menu-one').on('click', function(e){
+        console.log('clicked', this);
+    })
+});
+</script>
+{% endblock %}
+
+
+
+</head>
+<body>
+     <div class="topStyle"></div>
+    	<header>
+            <div id="logo" onclick="location.href='{{ path('sportnetzwerk_spn_homepage') }}'"><img src="{{ asset('images/spn-current-white.png') }}"></div>
+            {% block loginlink %}
+                {% if username is not empty %}
+                <div id="login"><a id="logout" href="{{ path('_logout') }}">logout</a></div>
+                <div id="sessionUser">{{ username }}&nbsp</div>
+            {% else %}
+                <div id="login"><a id="loginHref" href="#loginDialog">sign in</a></div>
+                <div class="space1">&nbsp;or&nbsp;</div>
+                <div id="signupUser"><a href="{{ path('sportnetzwerk_spn_homepage') }}">sign up</a></div>
+                {% endif%}
+            {% endblock %}
+            {% block navigation %}
+            <nav id="menu">
+            	<ul id="nav">
+                    <li class="current"><a href="{{ path('sportnetzwerk_spn_findPlayer') }}">spieler suchen</a></li>
+                     <li><a href="{{ path("sportnetzwerk_spn_sportsnews_render") }}">sportnews</a></li>
+                      <li><a href="{{ path("sportnetzwerk_spn_schedule") }}">spielplan</a></li>
+                        <li ><a href="{{ path("sportnetzwerk_spn_profile_current") }}">mynetwork</a></li>
+                        <li><a id="loginLink" href="#loginDialog">locations</a></li>
+                        <li><a href="{{ path('_security_signin') }}">sign in</a></li>
+                         <li><a href="evaluate_players.html">bewertungen</a></li>
+                        <li><a href="{{ path('sportnetzwerk_spn_faq') }}">faqs&nbsp;</a>
+                        </li>
+                        <li><a href="{{ path('sportnetzwerk_spn_contact') }}">kontakt</a></li>
+                </ul>
+            </nav>
+            {% endblock %}
+        </header>
+        {% block breadcrumbs %}
+        <div id="breadcrumbs" class="clearfix">
+            {{ wo_render_breadcrumbs({separator: '>', viewTemplate: "SportnetzwerkSpnBundle::customBreadcrumbs.html.twig" }) }}
+           <!-- <a href="#">Sportnetzwerk</a>&nbsp;&gt;&gt;&nbsp;<a href="#">Sign up</a> -->
+        </div>
+        {% endblock %}
+        {% block searchform %}
+        <div id="searchform">
+            <form method="POST" action="" id="search">
+                <span>Suche nach:</span>
+                <select id="searchtype" name="searchtype">
+                    <option value="player">Spieler</option>
+                    <option value="sport">Sportart</option>
+                    <option value="event">Event</option>
+                </select>
+                <input type="text" name="term" placeholder="Suchbegriff eingeben" id="searchterm">&nbsp;
+                <input type="button" value="suche" id="searchButton">
+            </form>
+        </div>
+        {% endblock %}
+        <div id="coreContent" class="clearfix">
+            {% block body %}
+            
+            {% endblock %}
+        </div>
+        {% block imageUpload_fancybox %}
+      <div id="uploadDialog">
+          <form method="post" name="uploadForm" id="uploadForm" action="{{ path('sportnetzwerk_spn_profile_image_upload_ajax') }}">
+               <p>Bitte wählen Sie ein Bild(jpeg,png)</p>
+               <label for="imageUploader">Bild hochladen</label><br>
+               <input type="file" id="imageUploader" name="imageUploader"><br>
+               <input type="button" onclick="$.fancybox.close();" value="zurück">
+               <input type="button" id="uploadImage" value="Upload">
+            </form>
+        </div>
+        {% endblock %}
+        {% block login_fancybox %}
+        <div id="loginDialog">
+          <form method="post" name="loginForm" id="loginForm" action="{{ path('sportnetzwerk_spn_login') }}">
+               <p>Bitte loggen Sie sich ein</p>
+               <label for="_username">Benutzername</label><br>
+               <input type="text" id="_username" name="_username"><br>
+               <label for="_password">Passwort</label><br>
+               <input type="password" id="_password" name="_password">
+               <p id="error_message">&nbsp;</p>
+               <input type="checkbox" id="remember_me" name="_remember_me" checked>eingeloggt bleiben
+               &nbsp;
+               <a href="#" class="smallLink">Passwort vergessen?</a>
+               <br><br>
+               <input type="button" onclick="$.fancybox.close(); reset(); document.getElementById('error_message').innerHTML = '&nbsp;';" value="zurück">
+               <input type="submit"  value="login">
+            </form>
+        </div>
+        {% endblock %}
+     
+        {% block password_fancybox %}
+        <div id="passwordDialog">
+          <form method="post" name="passwordForm" id="passwordForm" action="{{ path("sportnetzwerk_spn_store_password_ajax") }}">
+               <p>Bitte wählen Sie ein neues Password</p>
+               <label for="oldPassword">Altes Password</label><br>
+               <input type="password" id="oldPassword" name="oldPassword"><br>
+               <label for="newPassword">Neues Password</label><br>
+               <input type="password" id="newPassword" name="newPassword"><br>
+               <label for="repeatPassword">Password wiederholen</label><br>
+               <input type="password" id="repeatPassword" name="repeatPassword"><br><br>
+               <input type="button" id="changePasswd" value="speichern">
+               <input type="button" onclick="$.fancybox.close();" value="schliessen">
+            </form>
+        </div>
+        {% endblock %}
+     
+        <footer>
+            {% block footer %}
+             <div id="footer-left">
+               <a href="#">Impressum</a>
+               <a href="terms_conditions.html">AGB</a>
+               <a href="#{{ path('sportnetzwerk_spn_contact') }}>Kontakt</a>
+               <a href="#">Newsletter</a>
+               <a href="#"><img src="{{ asset('images/icon-fb.gif') }}"></a>
+               <a href="#"><img src="{{ asset('images/icon-twitter.png') }}"></a>
+               <a href="#"><img src="{{ asset('images/fav-star-large-off.png') }}"></a>
+               <a href="#"><img src="{{ asset('images/icon-envelope.png') }}"></a>
+            </div>
+            <div id="footer-right">
+                © 2013 doskaskonstantinos@gmail.com
+            </div>
+            {% endblock %}
+        </footer>
+</body>
+</html>

@@ -1,0 +1,42 @@
+
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/setskills.html.twig #}
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+
+{% block body %}
+            <div id="heading">Schritt 2 - Spielstärke</div>
+            <div id="contentWrap">
+            <form method="POST" action="sign_up_done.html" id="playerdata">
+                <p id="leftHeading">Gewählte Sportarten</p><!-- generic -->
+                <p id="description">
+                    Hier solltest du eine Selbsteinschätzung vornehmen:<br>
+                    Auf welchem Niveau liegen deine Skills deiner Meinung nach? Versuch bitte möglichst objektiv deine Fähigkeiten zu beurteilen.
+                    <br><br>Kleiner Tip: Solltest du dir nicht sicher sein, frag ein Paar deiner sportlichen Freunde nach deren ehrlicher Meinung.
+                    <br><br>
+                </p>
+            <section id="left">    
+               {% for item in sportslist %}
+                   <div><label>{{ item.name }}</label></div>
+                   <div>
+                       <select name="{{item.name}}_skill">
+                           {% for item in skilllist %}
+                               <option value="{{ item.id }}">{{ item.name }}</option>
+                            {% endfor%}
+                       </select>
+                   </div><br>
+               {% endfor%}
+            </section>
+            <section id="right">
+                    <br><br><br><br><br><br><br><br>
+                    <input type="checkbox" id="newsletter" checked="checked">
+                    <label for="newsletter">Ich möchte gerne den Newsletter abonieren und mich über neue &nbsp;Produkte&nbsp;
+                    und Entwicklungen im Bereich des Sports informieren.
+                    </label>
+                    <div id="buttonPos">
+                    <input type="button" value="fertig" onclick="this.form.submit();" id="continueStep2">    
+                    <input type="button" value="<< zurück" onclick='location.href="{{ path('sportnetzwerk_spn_homepage') }}"' id="backstep1">&nbsp;         
+                    </div>
+            </section>
+            </form>
+                </div>
+
+{% endblock %}

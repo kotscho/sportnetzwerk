@@ -1,0 +1,100 @@
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+{% block title %}My Settings{% endblock%}
+{% block body %}
+           <div id="heading">My Settings</div>  
+           <div id="contentWrap">
+            <form method="POST" id="playerdata" action="{{ path('sportnetzwerk_spn_homepage') }}" {{ form_enctype(form) }}>
+   <section id="myNetworkleft">
+       {{ form_errors(form) }}
+{{ form_label(form.name, 'Vorname') }}<br>
+
+{{ form_widget(form.name, {'attr': {'id': 'name'} }) }}<br>
+
+{{ form_label(form.lastname, 'Nachname') }}<br>
+
+{{ form_widget(form.lastname, {'attr': {'id': 'lastname'} }) }}<br>
+
+{{ form_label(form.email, 'Email') }}<br>
+                {{ form_widget(form.email, {'attr': {'id': 'email'}} ) }}<br><br>
+               
+                {{ form_label(form.gender, 'Geschlecht') }}
+
+                {{ form_widget(form.gender) }}
+                <br><br>
+                {{ form_label(form.username, 'Benutzername') }}<br>
+                {{ form_widget(form.username, {'attr': { 'id': 'username' }}) }}
+                <br>
+                {{ form_label(form.password.first, 'Passwort') }}&nbsp;&nbsp;<a id="passwordHref" href="#passwordDialog">Passwort ändern</a><br>
+                
+                {{ form_widget(form.password.first, {'attr': {'id': 'passwd'}}) }}<br>
+
+                {{ form_label(form.birthday, 'Geburtstag') }}<br>
+                
+                {{ form_widget(form.birthday, {'attr': {'id': 'birthday'} }) }}<br>
+                {{ form_label(form.zipcode, 'Wohnort(PLZ)') }}<br>
+                
+                {{ form_widget(form.zipcode) }}
+   </section>
+   <section id="myNetworkRight">
+                <div id="uploadImageMarkup">
+                <span id="editImage"><a id="uploadHref" href="#uploadDialog">Bild ändern</a></span>
+                <div id="image"><img class="profileImage" src="images/me.jpg"></div>
+                </div>
+                <div id="gameElements">
+                <div>   
+                    {{ form_label(form.player_status, 'Status') }}<br>
+                    {{ form_widget(form.player_status, { 'attr': {'id': 'player_status', 'class': 'gameSettingsMediumSelect'} }) }}
+                </div>
+                <div>
+                    {{ form_label(form.evaluate, 'Bewertungen') }}<br>
+                    {{ form_widget(form.evaluate, { 'attr': {'id': 'evaluate', 'class': 'gameSettingsMediumSelect'} }) }}
+                </div>
+                <div>
+                    {{ form_label(form.activityradius, 'Radius(km)') }}<br>
+                    {{ form_widget(form.activityradius, { 'attr': {'id': 'activity_radius', 'class': 'gameSettingsSmallSelect'} }) }}
+                </div>
+                <br>
+                {{ form_label(form.sports, 'Auswahl der Sportarten') }}<br>
+                
+                {{ form_widget(form.sports) }}
+                 
+   <br><br>
+                
+                </section>
+                <section id="myNetworkOuterRight">
+                <div class="gAdds" style="float: left;">
+                    <h4>AdSense</h4>
+                    &bull;&nbsp;<a href="#">Graziano: Eli isn't Superman</a><br>
+                    &bull;&nbsp;<a href="#">Willamson: Boldin bolsters 49ers</a><br>
+                    &bull;&nbsp;<a href="#">Demovsky: No defense for Packers</a><br>
+                    &bull;&nbsp;<a href="#">Blount: Wilson, Seahawks do enough</a><br>
+                    &bull;&nbsp;<a href="#">Brown: Steelers inept in opener</a><br>
+                    &bull;&nbsp;<a href="#">Reiss: Danny Amendola fits right in</a><br>
+                    &bull;&nbsp;<a href="#">Cimini: Ryan pushes right buttons</a><br>
+                    &bull;&nbsp;<a href="#">Seifert: Studs and Duds</a><br>
+                    &bull;&nbsp;<a href="#">Legwold: Broncos put NFL on notice</a><br>
+                </div>
+            
+                </section>  
+              <div id="buttonPosSaveSettings">
+                <input type="button" value="Daten speichern" onclick="this.form.submit();" id="SaveSettings">
+              </div>  
+            </form>
+                    
+                </div>
+    
+    {% if validationmsg|length > 0 %}
+        <script type="text/javascript">
+            console.log(document.getElementById('player_signup_birthday').value);
+        $(document).ready(function() {
+            $("#hiddenLink").fancybox().trigger('click');
+        });
+        </script>
+        <div id="shoerrors">
+        {% for key, error in validationmsg %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </div>
+    <a href="#shoerrors" id="hiddenLink"></a>
+    {% endif %}
+{% endblock %}

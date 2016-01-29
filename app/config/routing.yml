@@ -1,0 +1,4 @@
+sportnetzwerk_spn:
+    resource: "@SportnetzwerkSpnBundle/Resources/config/routing.yml"
+    prefix:   /
+

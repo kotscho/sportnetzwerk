@@ -1,0 +1,17 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/signupConfirmationEmail.txt.twig #}
+
+Sehr geehrte(r) Frau/Herr {{ player.name }},
+
+
+{% if newschedule %}
+Sie haben eine Einladung von (hier Name des Einladenden mit Profil Link) zu einem Sportevent erhalten:
+{% else %}
+Sie haben eine Zeitänderung zu einem Event von (hier Name des Einladenden mit Profil Link) zu einem Sportevent erhalten:
+{% endif %}
+Über den folgenden Link können Sie sich über die Details informieren und gegebenenfalls Ihre Teilnahme bestätigen:
+{{ app.request.getSchemeAndHttpHost() ~ path('sportnetzwerk_spn_invitation_mail', {'id':  player.id,'token': token}) }}
+
+
+Mit freundlichen Grüßen
+
+Ihr Sportnetzwerk

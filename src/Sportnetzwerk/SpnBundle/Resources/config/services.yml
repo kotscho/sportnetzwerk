@@ -1,0 +1,7 @@
+services:
+    sportnetzwerk_spn.logout:
+        class: Sportnetzwerk\SpnBundle\Services\LogoutHandler
+        arguments: [ "@doctrine.orm.entity_manager" ]
+    sportnetzwerk_spn.login:
+        class: Sportnetzwerk\SpnBundle\Services\LoginHandler
+        arguments: [ "@doctrine.orm.entity_manager" ]

@@ -1,0 +1,52 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/sportsnews.html.twig #}
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+
+{% block title %}Aktuelle Sportnews{% endblock%}
+{% block body %}
+    <div id="heading">Sportnews</div>
+   <div id="contentWrap">
+             <!-- loop through content - modify accordingly -->
+             
+             <div id="currentArticle">
+            <ul id="results">
+                {% for item in items %}
+                <li>
+                    <section style="float: left;"> 
+                        <a href="#" style="float: left; "><img src="{{ asset('images/dummy_thumbnail.png') }}"></a>
+                        <article style="height: 130px; width: 500px; float: left; display: block; margin-left: 8px;">
+                        <h3 style="margin-top: 0px;">    
+                        <a style="vertical-align: top;" target="_blank" href="{{ item.link }}">{{ item.title }}</a>
+                        </h3>         
+                        <a id="newsTeaser" target="_blank" href="{{ item.link }}">{{ item.content }}</a>
+                        <section id="newsactions">
+                        <div class="like">
+                        <iframe src="https://www.facebook.com/plugins/like.php?locale=en_US&amp;href='{{ item.link }}'&amp;send=false&amp;layout=button_count&amp;width=75&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" style="border:none; overflow:hidden; width:75px; height:21px;" allowtransparency="true" scrolling="no" frameborder="0"></iframe>
+                        </div>
+                        </section>
+                        </article>
+                        <div style="clear: both;"></div>
+                    </section>          
+                </li>
+                {% endfor %}
+            </ul>   
+                 </div>
+             <div class="gAdds">
+                    <h4>AdSense</h4>
+                    &bull;&nbsp;<a href="#">Graziano: Eli isn't Superman</a><br>
+                    &bull;&nbsp;<a href="#">Willamson: Boldin bolsters 49ers</a><br>
+                    &bull;&nbsp;<a href="#">Demovsky: No defense for Packers</a><br>
+                    &bull;&nbsp;<a href="#">Blount: Wilson, Seahawks do enough</a><br>
+                    &bull;&nbsp;<a href="#">Brown: Steelers inept in opener</a><br>
+                    &bull;&nbsp;<a href="#">Reiss: Danny Amendola fits right in</a><br>
+                    &bull;&nbsp;<a href="#">Cimini: Ryan pushes right buttons</a><br>
+                    &bull;&nbsp;<a href="#">Seifert: Studs and Duds</a><br>
+                    &bull;&nbsp;<a href="#">Legwold: Broncos put NFL on notice</a><br>
+                    &bull;&nbsp;<a href="#">Hensley: Ravens implode, historically</a><br>
+                    &bull;&nbsp;<a href="#">Clayton's Last Call: Strange starts</a><br>
+                    &bull;&nbsp;<a href="#">Week 1 Rapid Reactions</a><br>
+                    &bull;&nbsp;<a href="#">Week 1 scoreboard | Photo Gallery</a><br>
+                    &bull;&nbsp;<a href="#">Monday Night HQ</a><br>
+                </div>
+             <div id="clearArticle"></div>
+                </div>
+{% endblock %}

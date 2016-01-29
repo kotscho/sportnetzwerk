@@ -1,0 +1,18 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/eventInvitationError.html.twig #}
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+
+{% block title %}Oups{% endblock%}
+{% block body %}
+<div id="heading">Da ist aber was falsch gelaufen...</div>  
+ <section id="content">
+ <b>Sorry,</b><br>
+</b>
+<br><br>
+Dein Token ist falsch oder nicht mehr gültig.
+<br>
+Nützliche Hinweise findest du in den 
+<a href="{{ path('sportnetzwerk_spn_faq') }}">faqs</a>
+<br><br>
+Dein Sportnetzwerk
+</section>     
+{% endblock %}

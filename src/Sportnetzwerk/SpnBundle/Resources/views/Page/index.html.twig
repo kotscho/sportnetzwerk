@@ -1,0 +1,84 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/index.html.twig #}
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+
+{% block body %}
+    <div id="heading">Schritt 1 - Spielerdaten & Sportarten</div>
+           <div id="contentWrap">
+            <form method="POST" id="playerdata" action="{{ path('sportnetzwerk_spn_homepage') }}" {{ form_enctype(form) }}>
+   <section id="left">
+       {{ form_errors(form) }}
+{{ form_label(form.name, 'Vor - und Nachname') }}<br>
+
+{{ form_widget(form.name, {'attr': {'id': 'fullname'} }) }}<br>
+
+{{ form_label(form.email, 'Email') }}<br>
+                {{ form_widget(form.email, {'attr': {'id': 'email'}} ) }}<br>
+               
+                {{ form_label(form.gender, 'Geschlecht') }}
+
+                {{ form_widget(form.gender) }}
+                <br>
+                {{ form_label(form.password.first, 'Passwort') }}<br>
+                
+                {{ form_widget(form.password.first, {'attr': {'id': 'password'}}) }}<br>
+                {{ form_label(form.password.second, 'Passwort wiederholen') }}<br>
+                
+                {{ form_widget(form.password.second, {'attr': {'id': 'passwordrepeat' }}) }}<br>
+                
+                {{ form_label(form.birthday, 'Geburtstag') }}<br>
+                
+                {{ form_widget(form.birthday, {'attr': {'id': 'birthday'} }) }}<br>
+                {{ form_label(form.zipcode, 'Wohnort(PLZ)') }}<br>
+                
+                {{ form_widget(form.zipcode) }}
+   </section>
+   <section id="right_index">
+                {{ form_label(form.sports, 'Auswahl der Sportarten') }}<br>
+                
+                {{ form_widget(form.sports) }}
+                 
+   <br><br>
+                <input type="checkbox" name="acceptTerms" id="acceptTerms" value="ok" 
+                       onchange="if(this.checked){document.getElementById('continueStep1').disabled = false;}
+                           else{ document.getElementById('continueStep1').disabled = true; }">
+                <label for="acceptTerms">Ich habe die&nbsp;<a href="terms_conditions.html">Nutzungsbedingungen</a>
+                    &nbsp;gelesen, verstanden und stimme hiermit zu</label>
+                <div id="buttonPos">
+                    <input type="button" onclick="this.form.submit();" value="weiter >>" id="continueStep1" disabled="disabled" >
+                </div>   
+                </section>
+                <section style="float: left;">
+                <div class="gAdds" style="float: left;">
+                    <h4>AdSense</h4>
+                    &bull;&nbsp;<a href="#">Graziano: Eli isn't Superman</a><br>
+                    &bull;&nbsp;<a href="#">Willamson: Boldin bolsters 49ers</a><br>
+                    &bull;&nbsp;<a href="#">Demovsky: No defense for Packers</a><br>
+                    &bull;&nbsp;<a href="#">Blount: Wilson, Seahawks do enough</a><br>
+                    &bull;&nbsp;<a href="#">Brown: Steelers inept in opener</a><br>
+                    &bull;&nbsp;<a href="#">Reiss: Danny Amendola fits right in</a><br>
+                    &bull;&nbsp;<a href="#">Cimini: Ryan pushes right buttons</a><br>
+                    &bull;&nbsp;<a href="#">Seifert: Studs and Duds</a><br>
+                    &bull;&nbsp;<a href="#">Legwold: Broncos put NFL on notice</a><br>
+                </div>
+              
+                </section>  
+                
+            </form>
+                    
+                </div>
+    
+    {% if validationmsg|length > 0 %}
+        <script type="text/javascript">
+            console.log(document.getElementById('player_signup_birthday').value);
+        $(document).ready(function() {
+            $("#hiddenLink").fancybox().trigger('click');
+        });
+        </script>
+        <div id="shoerrors">
+        {% for key, error in validationmsg %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </div>
+    <a href="#shoerrors" id="hiddenLink"></a>
+    {% endif %}
+{% endblock %}

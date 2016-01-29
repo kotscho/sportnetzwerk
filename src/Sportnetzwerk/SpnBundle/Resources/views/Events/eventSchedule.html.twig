@@ -1,0 +1,174 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/eventSchedule.html.twig #}
+{% extends 'SportnetzwerkSpnBundle::layout.html.twig' %}
+
+{% block title %}Schedule{% endblock%}
+{% block body %}
+  <div id="heading">Schedule</div>  
+     <div id="content">
+    <div id="calendar"></div>
+</div>
+ 
+{% block schedule %}
+<script>
+	$(document).ready(function() {
+                
+        var localOptions = {
+	buttonText: {
+		today: 'Heute',
+		month: 'Monat',
+		day: 'Tag',
+		week: 'Woche'
+	},
+	monthNames: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+	monthNamesShort: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sept','Okt','Nov','Dez'],
+	dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+	dayNamesShort: ['So','Mo','Di','Mi','Do','Fr','Sa']
+        }
+        //button currently not in use
+        var save = $("<span/>")
+                .addClass("fc-button fc-button-save fc-state-default fc-corner-left fc-corner-right")
+                .attr({
+                    unselectable: "off",
+                    id: "eventSaveButton"
+                })  
+                .text("Event speichern");
+        
+        var spacer = $("<span/>").addClass("fc-header-space save-spacer"); 
+        
+		$('#calendar').fullCalendar($.extend({
+			
+                        header: {
+				left: 'prev,next today,save',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+                        selectable: true,
+                        editable: true,
+                        eventLimit: true,
+                        axisFormat: 'H:mm',
+                        timeFormat: 'H:mm',
+			events: [
+                                {% for event in events %}
+                                     {
+                                        title: '{{ event.sportsname }} Teilnehmer( {{ event.num_of_players }} )', 
+                                        start: '{{ event.start }}',
+                                        selectable: false,
+                                        end: '{{ event.end }}',
+                                        eventId: '{{ event.id }}',
+                                        allDay: false,
+                                        description:  '{{ event.player_names | join("@") }}',//joining with br tag does not work...
+                                        {% if (event.initiator == event.current_user)  %}
+                                            color: '#308E30'
+                                        {% else %}
+                                            color: '#5F5F5F',
+                                            startEditable: false
+                                        {% endif %}    
+                                        
+                                     }{% if not loop.last %},{% endif %}       
+                                {% endfor %}
+			],
+                        editable: true,
+                        eventRender: function(event, element) {
+                                     //couldn't figure out a better way in the short time given... 
+                                     var descr = event.description;
+                                     var currentView = $('#calendar').fullCalendar('getView');
+                                     if( currentView.name == 'agendaDay' ){
+                                        $("#eventSaveButton").click(function(){
+                                            console.log(event);
+                                            ajaxCallInvitation(event);
+                                        });
+                                     }
+                                     element.qtip({ 
+                                        content: descr.replace('@', '<br>'),
+                                        show: 'click',
+                                        maxWidth: 50
+                                    });
+                        },
+                        eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+                            var newEventDateStart = $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd, H:mm');
+                            var day = event.start.getDate();
+                            var month = event.start.getMonth();
+                            var year = event.start.getFullYear();
+                            var currentView = $('#calendar').fullCalendar('getView');
+                            var newEventDateEnd = $.fullCalendar.formatDate(event.end, 'yyyy-MM-dd, H:mm'); 
+                            alert(event.title + " wurde auf den " + newEventDateStart + " gelegt");
+                            
+                            if( (currentView.name === 'month') || (currentView.name === 'agendaWeek')){
+                                if (!confirm("Möchten Sie bestätigen und fortfahren?")) {
+                                    //event.resourceId=event.oldResourceId;
+                                    revertFunc();
+                                    return;
+                                }
+                            }
+                            if( currentView.name === "agendaDay" ){
+                                if(!confirm("Alle Teilnehmer benachrichtigen?")){
+                                    revertFunc();
+                                    return;
+                                }
+                                //ajax call for reinvitation
+                                //---------------------------------
+                                ajaxCallInvitation(event);
+                                //ajax end
+                                return;
+                            }
+                            $('#calendar').fullCalendar('gotoDate', year, month, day); 
+                            $('#calendar').fullCalendar('changeView', 'agendaDay');
+                            console.log('td[data-date="'+newEventDateStart+'"]');
+                            return;        
+                        },
+                        dayClick: function(date, allDay, jsEvent, view){
+                           var day = date.getDate();
+                           var month = date.getMonth();
+                           var year = date.getFullYear();
+                           
+                           alert('day: '+ day + 'month: ' + month + 'year' + year);
+                           $('#calendar').fullCalendar('gotoDate', year, month, day); 
+                           $('#calendar').fullCalendar('changeView', 'agendaDay');
+                                       
+                        },
+                        viewDisplay: function (view) {
+                            if (view.name === 'agendaDay') {
+                               $(".fc-header-left").find("span:last").after(spacer);
+                               $(".fc-header-left").find("span:last").after(save);
+                               console.log(event);//event not in this scope!!!!
+                               // $('.fc-widget-header.fc-sun, .fc-widget-header.fc-mon, .fc-widget-header.fc-tue, .fc-widget-header.fc-wed, .fc-widget-header.fc-thu, .fc-widget-header.fc-fri, .fc-widget-header.fc-sat')
+                               // .prepend("<div class='dropdown' style='display: inline'><a href=\"\">save event&nbsp;</a></div>");
+                              
+                            }
+                            else{
+                               $(".save-spacer").remove();
+                               $(".fc-button-save").remove();
+                            }
+                        }
+		},localOptions)
+                                
+                );  
+                
+	});
+
+
+        function ajaxCallInvitation(event){
+            
+            var newEventDateStart = $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd, H:mm');
+            var newEventDateEnd = $.fullCalendar.formatDate(event.end, 'yyyy-MM-dd, H:mm'); 
+            
+             $.ajax({   
+                type: "POST",
+                url: "{{ path('sportnetzwerk_spn_reinvitation_ajax') }}",
+                data: { eventId: event.eventId, newStart: newEventDateStart, newEnd: newEventDateEnd },
+                cache: false,
+                success: function(result){
+                    console.log(result);
+                    if( alert('Die Spieler wurden informiert') ){
+                        $('#calendar').fullCalendar('changeView', 'month');
+                    }
+                },
+                error: function(){
+                    alert('failure');
+                }
+             }); 
+        }
+</script>
+
+{% endblock %}  
+{% endblock %}

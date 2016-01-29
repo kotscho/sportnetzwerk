@@ -1,0 +1,18 @@
+{# src/Sportnetzwerk/SpnBundle/Resources/views/Page/signupConfirmationEmail.txt.twig #}
+
+Reply-To: {{ player.email }}
+Subject: Aktivierungsemail
+Body:
+
+Sehr geehrte(r) Frau/Herr {{ player.name }}
+
+wir begrüßen Sie recht herzlich in unserem Spornetzwerk.
+Ihr Zugang zum Sportnetzwerk ist nun eingerichtet.
+
+Über den folgenden Link können Sie Ihren Zugang endgültig freischalten:
+{{ app.request.getSchemeAndHttpHost() ~ path('sportnetzwerk_spn_activation', {'id': id, 'token': token}) }}
+
+
+Mit freundlichen Grüßen
+
+Ihr Sportnetzwerk
